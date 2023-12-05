@@ -23,21 +23,23 @@ jobs:
         run: |
           check.sh $(pwd) $(pwd)
           ERR_COUNT=0
-          IGNORE_ERROR="./libshell.a:1: MAJOR:C-O1"
           cat $REPORT_FILENAME | while read LINE; do
               TYPE=$(echo $LINE | cut -d ':' -f 3 | tr -d ' ')
               FILE=$(echo $LINE | cut -d ':' -f 1)
               AT=$(echo $LINE | cut -d ':' -f 2)
               ERROR=$(echo $LINE | cut -d ':' -f 4)
               ((ERR_COUNT++))
-              if [[ "$ERR_COUNT" -eq 1 && "$LINE" == "$IGNORE_ERROR" ]]; then
-                  continue
-              fi
               echo "::error file=$FILE,line=$AT,title=$TYPE coding style error::$ERROR"
           done
-          if [[ "$ERR_COUNT" -gt 1 || "$LINE" != "$IGNORE_ERROR" ]]; then
+          if [[ "$ERR_COUNT" -gt 1 ]]; then
               exit 1
           fi
+
+      - name: Archive production artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: output-log
+          path: output.log
 
   build_and_test:
     name: Build, test and memory check
