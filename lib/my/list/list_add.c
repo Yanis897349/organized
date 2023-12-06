@@ -8,12 +8,20 @@
 #include "my_list.h"
 #include <stdlib.h>
 
-linked_list_t *add_to_list(linked_list_t *list, void *data)
+void add_to_list(linked_list_t **list, void *data)
 {
-    linked_list_t *new = create_list(data);
+    linked_list_t *new_node = malloc(sizeof(linked_list_t));
+    linked_list_t *tmp = *list;
 
-    if (new == NULL)
-        return NULL;
-    new->next = list;
-    return new;
+    if (new_node == NULL)
+        return;
+    new_node->data = data;
+    new_node->next = NULL;
+    if (*list == NULL) {
+        *list = new_node;
+        return;
+    }
+    while (tmp->next != NULL)
+        tmp = tmp->next;
+    tmp->next = new_node;
 }

@@ -15,7 +15,10 @@ typedef struct linked_list_s {
 void null_function(void *data);
 void destroy_list(linked_list_t *list, void (*free_func)());
 
+void *get_from_list(linked_list_t **list, void *ref, int (*cmp)());
+int get_list_size(linked_list_t **list);
+
 linked_list_t *create_list(void *data);
-linked_list_t *add_to_list(linked_list_t *list, void *data);
-linked_list_t *delete_from_list(linked_list_t *list, void *ref, int (*cmp)(),
+void add_to_list(linked_list_t **list, void *data);
+int delete_from_list(linked_list_t **list, void *ref, int (*cmp)(),
     void (*free_func)());
