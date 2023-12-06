@@ -1,0 +1,3 @@
+add WIRE a, WIRE b, DEVICE c, SENSOR d
+disp
+exit
