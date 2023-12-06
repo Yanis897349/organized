@@ -100,7 +100,9 @@ STD_FUNCS = ./std/my_realloc.c \
 LIST_FUNCS = ./list/list_create.c \
 	./list/list_destroy.c \
 	./list/list_add.c \
-	./list/list_remove.c
+	./list/list_remove.c \
+	./list/list_size.c \
+	./list/list_get.c
 
 SRC := $(CTYPE_FUNCS) \
 	   $(MATH_FUNCS) \
