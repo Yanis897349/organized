@@ -38,6 +38,7 @@ int add(void *data, char **args)
 {
     linked_list_t **list = data;
     material_t *new_hardware = NULL;
+    static int new_id = 0;
 
     for (int i = 0; args[i] != NULL; i += 2) {
         new_hardware = malloc(sizeof(material_t));
@@ -45,7 +46,7 @@ int add(void *data, char **args)
             return 84;
         new_hardware->type = my_strdup(args[i]);
         new_hardware->name = my_strdup(args[i + 1]);
-        new_hardware->id = get_list_size(list);
+        new_hardware->id = new_id;
         add_to_list(list, new_hardware);
         my_putstr(new_hardware->type);
         my_putstr(" n°");
@@ -53,6 +54,7 @@ int add(void *data, char **args)
         my_putstr(" added - '");
         my_putstr(new_hardware->name);
         my_putstr("' added.\n");
+        new_id++;
     }
     return 0;
 }
