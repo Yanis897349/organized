@@ -12,7 +12,9 @@ LDFLAGS = -L . -lmy $(SHELLFLAGS)
 RM = rm -f
 
 MAIN_SRC = ./src/main.c
-SRC = ./src/organized.c
+SRC = ./src/organized.c \
+	./src/args.c \
+	./src/display.c
 SRC_TEST = ./tests/test_organized.c
 OBJS = $(MAIN_SRC:.c=.o) $(SRC:.c=.o)
 TEST_OBJS = $(SRC:.c=.o) $(SRC_TEST:.c=.o)
