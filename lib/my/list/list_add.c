@@ -16,12 +16,6 @@ void add_to_list(linked_list_t **list, void *data)
     if (new_node == NULL)
         return;
     new_node->data = data;
-    new_node->next = NULL;
-    if (*list == NULL) {
-        *list = new_node;
-        return;
-    }
-    while (tmp->next != NULL)
-        tmp = tmp->next;
-    tmp->next = new_node;
+    new_node->next = tmp;
+    *list = new_node;
 }
