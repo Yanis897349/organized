@@ -11,12 +11,14 @@
 #include "include/my_math.h"
 #include "include/my_std.h"
 #include "organized.h"
+#include "compare.h"
 #include "display.h"
+#include "sort.h"
 #include "args.h"
 #include "shell.h"
 #include <stdlib.h>
 
-static int compare_int(material_t *hardware, int *b)
+static int compare_id(material_t *hardware, int *b)
 {
     return hardware->id - *b;
 }
@@ -62,7 +64,7 @@ int del(void *data, char **args)
         if (my_str_isnum(args[i]) == 0)
             continue;
         ref = my_getnbr(args[i]);
-        delete_from_list(list, &ref, &compare_int, &delete_hardware);
+        delete_from_list(list, &ref, &compare_id, &delete_hardware);
     }
     return 0;
 }
@@ -72,6 +74,7 @@ int disp(void *data, char **args)
     linked_list_t **list = data;
     material_t *hardware = NULL;
 
+    (void) args;
     for (linked_list_t *tmp = *list; tmp != NULL; tmp = tmp->next) {
         hardware = tmp->data;
         display_hardware(hardware);
@@ -81,5 +84,18 @@ int disp(void *data, char **args)
 
 int sort(void *data, char **args)
 {
+    linked_list_t **list = data;
+    int is_reverse = 0;
+
+    for (int i = 0; args[i] != NULL; i++) {
+        if (args[i + 1] != NULL)
+            is_reverse = (my_strcmp(args[i + 1], "-r") == 0) ? 1 : 0;
+        if (my_strcmp(args[i], "TYPE") == 0)
+            quick_sort(*list, get_tail(*list), &cmp_by_type, is_reverse);
+        if (my_strcmp(args[i], "NAME") == 0)
+            quick_sort(*list, get_tail(*list), &cmp_by_name, is_reverse);
+        if (my_strcmp(args[i], "ID") == 0)
+            quick_sort(*list, get_tail(*list), &cmp_by_id, is_reverse);
+    }
     return 0;
 }
