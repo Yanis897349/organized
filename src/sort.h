@@ -10,5 +10,4 @@
 #include "include/my_list.h"
 
 linked_list_t *get_tail(linked_list_t *head);
-void quick_sort(linked_list_t *head, linked_list_t *tail, int (*cmp)(), int
-    is_reverse);
+void merge_sort(linked_list_t **head_ref, int (*cmp)(), int is_reverse);
