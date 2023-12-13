@@ -9,48 +9,55 @@
 #include "organized.h"
 #include <stddef.h>
 
-linked_list_t *get_tail(linked_list_t *head)
+static void fb_split(linked_list_t *head, linked_list_t **front_ref,
+    linked_list_t **back_ref)
 {
-    linked_list_t *tmp = head;
+    linked_list_t *fast = NULL;
+    linked_list_t *slow = NULL;
 
-    while (tmp != NULL && tmp->next != NULL)
-        tmp = tmp->next;
-    return tmp;
-}
-
-static linked_list_t *arrange_around_pivot(linked_list_t *head,
-    linked_list_t *tail, int (*cmp)(), int is_reverse)
-{
-    linked_list_t *pivot = head;
-    linked_list_t *front = head;
-    void *tmp = NULL;
-
-    while (front != NULL && front != tail) {
-        if (cmp(front, tail, is_reverse)) {
-            pivot = head;
-            tmp = head->data;
-            head->data = front->data;
-            front->data = tmp;
-            head = head->next;
+    slow = head;
+    fast = head->next;
+    while (fast != NULL) {
+        fast = fast->next;
+        if (fast != NULL) {
+            slow = slow->next;
+            fast = fast->next;
         }
-        front = front->next;
     }
-    tmp = head->data;
-    head->data = tail->data;
-    tail->data = tmp;
-    return pivot;
+    *front_ref = head;
+    *back_ref = slow->next;
+    slow->next = NULL;
 }
 
-void quick_sort(linked_list_t *head, linked_list_t *tail, int (*cmp)(), int
-    is_reverse)
+static linked_list_t *sorted_merge(linked_list_t *a, linked_list_t *b,
+    int (*cmp)(), int is_reverse)
 {
-    linked_list_t *pivot = NULL;
+    linked_list_t *result = NULL;
 
-    if (head == tail)
+    if (a == NULL)
+        return b;
+    else if (b == NULL)
+        return a;
+    if (cmp(a, b, is_reverse)) {
+        result = a;
+        result->next = sorted_merge(a->next, b, cmp, is_reverse);
+    } else {
+        result = b;
+        result->next = sorted_merge(a, b->next, cmp, is_reverse);
+    }
+    return result;
+}
+
+void merge_sort(linked_list_t **head_ref, int (*cmp)(), int is_reverse)
+{
+    linked_list_t *head = *head_ref;
+    linked_list_t *a = NULL;
+    linked_list_t *b = NULL;
+
+    if ((head == NULL) || (head->next == NULL))
         return;
-    pivot = arrange_around_pivot(head, tail, cmp, is_reverse);
-    if (pivot != NULL && pivot->next != NULL)
-        quick_sort(pivot->next, tail, cmp, is_reverse);
-    if (pivot != NULL && head != pivot)
-        quick_sort(head, pivot, cmp, is_reverse);
+    fb_split(head, &a, &b);
+    merge_sort(&a, cmp, is_reverse);
+    merge_sort(&b, cmp, is_reverse);
+    *head_ref = sorted_merge(a, b, cmp, is_reverse);
 }
