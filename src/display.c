@@ -10,32 +10,32 @@
 #include "organized.h"
 #include <stddef.h>
 
-void display_added_hardware(material_t *hardware)
+void display_added_material(material_t *material)
 {
-    my_putstr(hardware->type);
+    my_putstr(material->type);
     my_putstr(" n°");
-    my_put_nbr(hardware->id);
+    my_put_nbr(material->id);
     my_putstr(" - \"");
-    my_putstr(hardware->name);
+    my_putstr(material->name);
     my_putstr("\" added.\n");
 }
 
-void display_deleted_hardware(material_t *hardware)
+void display_deleted_material(material_t *material)
 {
-    my_putstr(hardware->type);
+    my_putstr(material->type);
     my_putstr(" n°");
-    my_put_nbr(hardware->id);
+    my_put_nbr(material->id);
     my_putstr(" - \"");
-    my_putstr(hardware->name);
+    my_putstr(material->name);
     my_putstr("\" deleted.\n");
 }
 
-void display_hardware(material_t *hardware)
+void display_material(material_t *material)
 {
-    my_putstr(hardware->type);
+    my_putstr(material->type);
     my_putstr(" n°");
-    my_put_nbr(hardware->id);
+    my_put_nbr(material->id);
     my_putstr(" - \"");
-    my_putstr(hardware->name);
+    my_putstr(material->name);
     my_putstr("\"\n");
 }

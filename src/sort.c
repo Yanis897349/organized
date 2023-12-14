@@ -29,7 +29,7 @@ static void fb_split(linked_list_t *head, linked_list_t **front_ref,
     slow->next = NULL;
 }
 
-static linked_list_t *sorted_merge(linked_list_t *a, linked_list_t *b,
+static linked_list_t *merge_back(linked_list_t *a, linked_list_t *b,
     int (*cmp)(), int is_reverse)
 {
     linked_list_t *result = NULL;
@@ -40,10 +40,10 @@ static linked_list_t *sorted_merge(linked_list_t *a, linked_list_t *b,
         return a;
     if (cmp(a, b, is_reverse)) {
         result = a;
-        result->next = sorted_merge(a->next, b, cmp, is_reverse);
+        result->next = merge_back(a->next, b, cmp, is_reverse);
     } else {
         result = b;
-        result->next = sorted_merge(a, b->next, cmp, is_reverse);
+        result->next = merge_back(a, b->next, cmp, is_reverse);
     }
     return result;
 }
@@ -59,5 +59,5 @@ void merge_sort(linked_list_t **head_ref, int (*cmp)(), int is_reverse)
     fb_split(head, &a, &b);
     merge_sort(&a, cmp, is_reverse);
     merge_sort(&b, cmp, is_reverse);
-    *head_ref = sorted_merge(a, b, cmp, is_reverse);
+    *head_ref = merge_back(a, b, cmp, is_reverse);
 }
