@@ -19,17 +19,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static int compare_id(material_t *hardware, int *b)
+static int compare_id(material_t *material, int *b)
 {
-    return hardware->id - *b;
+    return material->id - *b;
 }
 
-static void delete_hardware(material_t *hardware)
+static void delete_material(material_t *material)
 {
-    display_deleted_hardware(hardware);
-    free(hardware->type);
-    free(hardware->name);
-    free(hardware);
+    display_deleted_material(material);
+    free(material->type);
+    free(material->name);
+    free(material);
 }
 
 static void execute_sort(sort_operation_t *sort_operations, int sort_index,
@@ -46,21 +46,21 @@ int add(void *data, char **args)
 {
     static int new_id = 0;
     linked_list_t **list = data;
-    material_t *new_hardware = NULL;
+    material_t *new_material = NULL;
 
     if (check_args_parity(args) == EXIT_FAILURE)
         return EXIT_ERROR;
     for (int i = 0; args[i] != NULL; i += 2) {
         if (!is_type_valid(args[i]))
             continue;
-        new_hardware = malloc(sizeof(material_t));
-        if (new_hardware == NULL)
+        new_material = malloc(sizeof(material_t));
+        if (new_material == NULL)
             return EXIT_ERROR;
-        new_hardware->type = my_strdup(args[i]);
-        new_hardware->name = my_strdup(args[i + 1]);
-        new_hardware->id = new_id;
-        add_to_list(list, new_hardware);
-        display_added_hardware(new_hardware);
+        new_material->type = my_strdup(args[i]);
+        new_material->name = my_strdup(args[i + 1]);
+        new_material->id = new_id;
+        add_to_list(list, new_material);
+        display_added_material(new_material);
         new_id++;
     }
     return EXIT_SUCCESS;
@@ -75,7 +75,7 @@ int del(void *data, char **args)
         if (my_str_isnum(args[i]) == 0)
             continue;
         ref = my_getnbr(args[i]);
-        delete_from_list(list, &ref, &compare_id, &delete_hardware);
+        delete_from_list(list, &ref, &compare_id, &delete_material);
     }
     return 0;
 }
@@ -83,12 +83,12 @@ int del(void *data, char **args)
 int disp(void *data, char **args)
 {
     linked_list_t **list = data;
-    material_t *hardware = NULL;
+    material_t *material = NULL;
 
     (void) args;
     for (linked_list_t *tmp = *list; tmp != NULL; tmp = tmp->next) {
-        hardware = tmp->data;
-        display_hardware(hardware);
+        material = tmp->data;
+        display_material(material);
     }
     return 0;
 }
