@@ -52,7 +52,7 @@ int add(void *data, char **args)
         return EXIT_ERROR;
     for (int i = 0; args[i] != NULL; i += 2) {
         if (!is_type_valid(args[i]))
-            continue;
+            return EXIT_ERROR;
         new_material = malloc(sizeof(material_t));
         if (new_material == NULL)
             return EXIT_ERROR;
@@ -73,7 +73,7 @@ int del(void *data, char **args)
 
     for (int i = 0; args[i] != NULL; i++) {
         if (my_str_isnum(args[i]) == 0)
-            continue;
+            return EXIT_ERROR;
         ref = my_getnbr(args[i]);
         delete_from_list(list, &ref, &compare_id, &delete_material);
     }
@@ -85,7 +85,8 @@ int disp(void *data, char **args)
     linked_list_t **list = data;
     material_t *material = NULL;
 
-    (void) args;
+    if (args[0] != NULL)
+        return EXIT_ERROR;
     for (linked_list_t *tmp = *list; tmp != NULL; tmp = tmp->next) {
         material = tmp->data;
         display_material(material);
