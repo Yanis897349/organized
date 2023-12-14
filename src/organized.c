@@ -24,6 +24,41 @@ static int compare_id(material_t *material, int *b)
     return material->id - *b;
 }
 
+static int are_sorting_args_valid(char **args)
+{
+    for (int i = 0; args[i] != NULL; i++) {
+        if (my_strcmp(args[i], "TYPE") != 0 &&
+            my_strcmp(args[i], "NAME") != 0 &&
+            my_strcmp(args[i], "ID") != 0 &&
+            my_strcmp(args[i], "-r") != 0)
+            return EXIT_ERROR;
+    }
+    return EXIT_SUCCESS;
+}
+
+static sort_operation_t *get_sort_operations(char **args)
+{
+    sort_operation_t *sort_operations = malloc(sizeof(sort_operation_t) * 3);
+    int sort_index = 0;
+
+    my_memset(sort_operations, 0, sizeof(sort_operation_t) * 3);
+    for (int i = 0; args[i] != NULL; i++) {
+        if (my_strcmp(args[i], "-r") == 0)
+            continue;
+        if (my_strcmp(args[i], "TYPE") == 0)
+            sort_operations[sort_index].sort_function = &cmp_by_type;
+        if (my_strcmp(args[i], "NAME") == 0)
+            sort_operations[sort_index].sort_function = &cmp_by_name;
+        if (my_strcmp(args[i], "ID") == 0)
+            sort_operations[sort_index].sort_function = &cmp_by_id;
+        if (args[i + 1] != NULL && my_strcmp(args[i + 1], "-r") == 0) {
+            sort_operations[sort_index].is_reverse = 1;
+        }
+        sort_index++;
+    }
+    return sort_operations;
+}
+
 static void delete_material(material_t *material)
 {
     display_deleted_material(material);
@@ -32,14 +67,28 @@ static void delete_material(material_t *material)
     free(material);
 }
 
-static void execute_sort(sort_operation_t *sort_operations, int sort_index,
+static int get_sort_operations_count(sort_operation_t *sort_operations)
+{
+    int count = 0;
+
+    for (int i = 0; i < 3; i++) {
+        if (sort_operations[i].sort_function != NULL)
+            count++;
+    }
+    return count;
+}
+
+static void execute_sort(sort_operation_t *sort_operations,
     linked_list_t **list)
 {
+    int sort_index = get_sort_operations_count(sort_operations);
+
     for (int i = sort_index - 1; i >= 0; i--) {
         if (sort_operations[i].sort_function != NULL)
             merge_sort(list, sort_operations[i].sort_function,
                 sort_operations[i].is_reverse);
     }
+    free(sort_operations);
 }
 
 int add(void *data, char **args)
@@ -97,23 +146,13 @@ int disp(void *data, char **args)
 int sort(void *data, char **args)
 {
     linked_list_t **list = data;
-    sort_operation_t sort_operations[3] = {{NULL, 0}, {NULL, 0}, {NULL, 0}};
-    int sort_index = 0;
+    sort_operation_t *sort_operations = NULL;
 
-    for (int i = 0; args[i] != NULL; i++) {
-        if (my_strcmp(args[i], "TYPE") == 0)
-            sort_operations[sort_index].sort_function = &cmp_by_type;
-        if (my_strcmp(args[i], "NAME") == 0)
-            sort_operations[sort_index].sort_function = &cmp_by_name;
-        if (my_strcmp(args[i], "ID") == 0)
-            sort_operations[sort_index].sort_function = &cmp_by_id;
-        if (args[i + 1] != NULL && my_strcmp(args[i + 1], "-r") == 0) {
-            sort_operations[sort_index].is_reverse = 1;
-        }
-        if (my_strcmp(args[i], "-r") == 0)
-            continue;
-        sort_index++;
-    }
-    execute_sort(sort_operations, sort_index, list);
+    if (are_sorting_args_valid(args) == EXIT_ERROR)
+        return EXIT_ERROR;
+    sort_operations = get_sort_operations(args);
+    if (sort_operations == NULL)
+        return EXIT_ERROR;
+    execute_sort(sort_operations, list);
     return 0;
 }
