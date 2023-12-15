@@ -27,7 +27,7 @@ int check_args_parity(char **args)
     int i = 0;
 
     for (; args[i] != NULL; i++);
-    if (i % 2 != 0)
+    if (i % 2 != 0 || i == 0)
         return EXIT_FAILURE;
     return EXIT_SUCCESS;
 }

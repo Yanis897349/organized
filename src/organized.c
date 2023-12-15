@@ -120,13 +120,15 @@ int del(void *data, char **args)
     linked_list_t **list = data;
     int ref = -1;
 
+    if (args[0] == NULL)
+        return EXIT_ERROR;
     for (int i = 0; args[i] != NULL; i++) {
         if (my_str_isnum(args[i]) == 0)
             return EXIT_ERROR;
         ref = my_getnbr(args[i]);
         delete_from_list(list, &ref, &compare_id, &delete_material);
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int disp(void *data, char **args)
@@ -140,7 +142,7 @@ int disp(void *data, char **args)
         material = tmp->data;
         display_material(material);
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
 
 int sort(void *data, char **args)
@@ -153,6 +155,8 @@ int sort(void *data, char **args)
     sort_operations = get_sort_operations(args);
     if (sort_operations == NULL)
         return EXIT_ERROR;
+    if (sort_operations[0].sort_function == NULL)
+        return EXIT_ERROR;
     execute_sort(sort_operations, list);
-    return 0;
+    return EXIT_SUCCESS;
 }
